@@ -11,6 +11,21 @@ struct Sentence {
     health: i32
 }
 
+impl Sentence {
+    fn new(row: StringRecord) -> Sentence {
+        let vida = row.get(3).unwrap().trim();
+        let vida: i32 = vida.parse().unwrap_or(0);
+
+        let sentence = Sentence {
+            output_type: row.get(0).unwrap().trim().to_string(),
+            tag: row.get(1).unwrap().trim().to_string(),
+            text: row.get(2).unwrap().trim().to_string(),
+            health: vida,
+        };
+    }
+}
+
+
 fn main() {
     let mut story_sentences: Vec<Sentence> = vec![];
 
@@ -21,15 +36,7 @@ fn main() {
     for result in rdr.records() {
         let result = result.unwrap();
 
-        let vida = result.get(3).unwrap().trim();
-        let vida: i32 = vida.parse().unwrap_or(0);
-
-        let sentence = Sentence {
-            output_type: result.get(0).unwrap().trim().to_string(),
-            tag: result.get(1).unwrap().trim().to_string(),
-            text: result.get(2).unwrap().trim().to_string(),
-            health: vida,
-        };
+        let sentence = Sentence::new(result);
 
         story_sentences.push(sentence);
     }
