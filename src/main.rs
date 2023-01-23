@@ -66,6 +66,9 @@ fn main() {
         if let Some(data) = story_sentences.get(current_tag) {
             println!("{}", data.text);
 
+            for (idx, option) in data.options.iter().enumerate() {
+                println!("[{}]{}", idx, option.text);
+            }
 
             break;
         }
