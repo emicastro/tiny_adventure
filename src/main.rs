@@ -3,31 +3,40 @@ use std::collections::HashMap;
 use std::fs;
 
 const FILENAME: &str = "story.csv";
+const FIRST_TAG: &str = "BEGINNING";
 
-`#[derive(Debug)]`
+#[derive(Debug)]
 struct Sentence {
     output_type: String,
     tag: String,
     text: String,
-    health: i32
+    health: i32,
+    options: Vec<Sentence>,
 }
 
 impl Sentence {
     fn new(row: StringRecord) -> Sentence {
-        let vida = row.get(3).unwrap().trim();
-        let vida: i32 = vida.parse().unwrap_or(0);
+        let health = row.get(3).unwrap().trim();
+        let health: i32 = health.parse().unwrap_or(0);
 
         let sentence = Sentence {
             output_type: row.get(0).unwrap().trim().to_string(),
             tag: row.get(1).unwrap().trim().to_string(),
             text: row.get(2).unwrap().trim().to_string(),
-            health: vida,
+            health: health,
+            options: vec![],
         };
+        sentence
     }
 }
 
 
 fn main() {
+    let mut health = 100;
+    let mut current_tag = FIRST_TAG;
+
+    let mut last_sentence = String::new();
+
     let mut story_sentences: HashMap<String, Sentence> = HashMap::new();
 
     let content = fs::read_to_string(FILENAME).unwrap();
@@ -36,12 +45,29 @@ fn main() {
 
     for result in rdr.records() {
         let result = result.unwrap();
-
         let sentence = Sentence::new(result);
 
-        story_sentences.insert(sentence.tag.clone(), sentence);
+        if sentence.output_type == "SITUATION" {
+            let sentence_tag = sentence.tag.clone();
+            story_sentences.insert(sentence_tag.clone(), sentence);
+            last_sentence = sentence_tag;
+
+        } else if sentence.output_type == "OPTION" {
+            if let Some(data) = story_sentences.get_mut(&last_sentence) {
+                (*data).options.push(sentence);
+            }
+        }
     }
 
+    // Game Loop
+    loop {
+        println!("You have {}% of health", health);
 
-    println!("{:?}", story_sentences);
+        if let Some(data) = story_sentences.get(current_tag) {
+            println!("{}", data.text);
+
+
+            break;
+        }
+    }
 }
