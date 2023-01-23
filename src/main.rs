@@ -1,4 +1,5 @@
 use csv::{ReaderBuilder, StringRecord};
+use std::collections::HashMap;
 use std::fs;
 
 const FILENAME: &str = "story.csv";
@@ -27,7 +28,7 @@ impl Sentence {
 
 
 fn main() {
-    let mut story_sentences: Vec<Sentence> = vec![];
+    let mut story_sentences: HashMap<String, Sentence> = HashMap::new();
 
     let content = fs::read_to_string(FILENAME).unwrap();
 
@@ -38,7 +39,7 @@ fn main() {
 
         let sentence = Sentence::new(result);
 
-        story_sentences.push(sentence);
+        story_sentences.insert(sentence.tag.clone(), sentence);
     }
 
 
