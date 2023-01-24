@@ -70,7 +70,15 @@ fn main() {
                 println!("[{}]{}", idx, option.text);
             }
 
-            break;
+            let mut selection = String::new();
+            std::io::stdin().read_line(&mut selection).unwrap();
+            let selection = selection.trim().parse().unwrap_or(99);
+
+            if let Some(chosen_option) = &data.options.get(selection) {
+                current_tag = &chosen_option.tag;
+            } else {
+                println!("Not a valid option");
+            }
         }
     }
 }
