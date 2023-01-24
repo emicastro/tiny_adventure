@@ -79,6 +79,17 @@ fn main() {
             } else {
                 println!("Not a valid option");
             }
+
+            health += data.health;
+            println!("");
+        } else {
+            break;
+        }
+
+        // If healt <= 0 then is Game Over
+        if health <= 0 {
+            println!("You're DEAD :(");
+            break;
         }
     }
 }
